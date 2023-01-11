@@ -10,27 +10,39 @@ use smarthouse4::utils::PowerState;
 use smarthouse4::{Room, SmartHouse};
 
 fn main() {
+    // create rooms
     let kitchen = Room::new(String::from("Кухня"));
     let bedroom = Room::new(String::from("Спальня"));
 
-    let mut house = SmartHouse::new();
-    house.add_room(&kitchen);
-    house.add_room(&bedroom);
-
+    // create devices
+    // next two go to the kitchen
     let socket1 = Socket::new(String::from("Socket 1"), PowerState::On);
-    kitchen.add_device(String::from("Socket 1"), &socket1);
     let thermo1 = Thermometer::new(36.6f32);
-    kitchen.add_device(String::from("Thermometer 1"), &thermo1);
+    // and another two go to the bedroom
+    let socket2 = Socket::new(String::from("Socket 2"), PowerState::On);
+    let pc = PressureController::new();
+
+    kitchen
+        .add_device(String::from("Socket 1"), &socket1)
+        .add_device(String::from("Thermometer 1"), &thermo1);
+
+    bedroom
+        .add_device(String::from("Socket 1"), &socket1)
+        .add_device(String::from("Thermometer 1"), &thermo1);
+
+    let mut house = SmartHouse::new();
+    house
+     .add_room(&kitchen)
+     .add_room(&bedroom);
 
     socket1.power(PowerState::On);
     let soc_ref = &socket1;
     soc_ref.power(PowerState::Off);
 
-    let socket2 = Socket::new(String::from("Socket 2"), PowerState::On);
-    bedroom.add_device(String::from("Socket 2"), &socket2);
+    bedroom
+        .add_device(String::from("Socket 2"), &socket2)
+        .add_device(String::from("Pressure"), &pc);
 
-    let pc = PressureController::new();
-    bedroom.add_device(String::from("Pressure"), &pc);
     println!("{}", house.get_info());
 
     pc.power(PowerState::On);

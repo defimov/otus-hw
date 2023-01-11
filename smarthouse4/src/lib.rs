@@ -13,8 +13,9 @@ impl<'a> SmartHouse<'a> {
         SmartHouse { rooms: Vec::new() }
     }
 
-    pub fn add_room(&mut self, room: &'a Room<'a>) {
+    pub fn add_room(&mut self, room: &'a Room<'a>) -> &mut Self {
         self.rooms.push(room);
+        self
     }
 }
 
@@ -50,11 +51,12 @@ impl<'a> Room<'a> {
         }
     }
 
-    pub fn add_device(&self, device_name: String, device: &'a dyn InfoProvider) {
+    pub fn add_device(&self, device_name: String, device: &'a dyn InfoProvider) -> &Self {
         self.devices
             .borrow_mut()
             .entry(device_name)
             .or_insert(device);
+            self
     }
 }
 
